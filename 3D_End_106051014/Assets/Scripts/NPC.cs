@@ -15,6 +15,8 @@ public class NPC : MonoBehaviour
     [Header("對話間隔")]
     public float interval = 0.2f;
 
+    public Animator Npc;
+
     // 定義列舉 eunm (下拉式選單 - 只能選一個)
     public enum NPCState
     {
@@ -31,22 +33,13 @@ public class NPC : MonoBehaviour
     /// </summary>
     private bool playerInArea;
 
-    /* 協同程序
-    private void Start()
-    {
-        // 啟動協程
-        StartCoroutine(Test());
-    }
+    /// <summary>
+    /// 玩家是否曾進入過感應區
+    /// </summary>
+    int inarea;
 
-    private IEnumerator Test()
-    {
-        print("嗨~");
-        yield return new WaitForSeconds(1.5f);
-        print("嗨，我是一點五秒後");
-        yield return new WaitForSeconds(2);
-        print("嗨，又過去兩秒了");
-    }
-    */
+    
+
 
     private void OnTriggerEnter(Collider other)
     {
@@ -54,6 +47,8 @@ public class NPC : MonoBehaviour
         {
             playerInArea = true;
             StartCoroutine(Dialog());
+            Npc.SetBool("玩家靠近", true);
+            inarea++;
         }
     }
 
@@ -63,6 +58,7 @@ public class NPC : MonoBehaviour
         {
             playerInArea = false;
             StopDialog();
+            Npc.SetBool("玩家靠近", false);
         }
     }
 
@@ -80,22 +76,7 @@ public class NPC : MonoBehaviour
     /// </summary>
     private IEnumerator Dialog()
     {
-        /**
-        // print(data.dialogA);            // 取得字串全部資料
-        // print(data.dialogA[0]);         // 取得字串局部資料：語法 [編號]
-
-        // for 迴圈：重複處理相同程式
-        //for (int i = 0; i < 10; i++)
-        //{
-        //    print("我是迴圈：" + i);
-        //}
-
-        //for (int apple = 1; apple < 100; apple++)
-        //{
-        //    print("迴圈：" + apple);
-        //}
-        */
-
+        
         // 顯示對話框
         dialog.SetActive(true);
         // 清空文字
@@ -105,6 +86,15 @@ public class NPC : MonoBehaviour
 
         // 要說的對話
         string dialogString = data.dialogB;
+
+        if (inarea >= 1)
+        {
+            state = NPCState.Missioning;
+        }
+        if(inarea >= 1&&data.countCurrent==data.count)
+        {
+            state = NPCState.Finish;
+        }
 
         // 判斷 NPC 狀態 來顯示對應的 對話內容
         switch (state)
@@ -128,5 +118,6 @@ public class NPC : MonoBehaviour
             textContent.text += dialogString[i] + "";
             yield return new WaitForSeconds(interval);
         }
+        
     }
 }

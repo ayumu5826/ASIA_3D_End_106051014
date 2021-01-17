@@ -23,6 +23,7 @@ public class Enemy : MonoBehaviour
     /// 計時器
     /// </summary>
     private float timer;
+    public NPCData data;
 
     private void Awake()
     {
@@ -80,7 +81,7 @@ public class Enemy : MonoBehaviour
             // 如果 計時器 >= 冷卻時間 就攻擊 並且計時器歸零
             if (timer >= cd)
             {
-                ani.SetTrigger("攻擊觸發");
+                ani.SetTrigger("Attack");
                 timer = 0;
 
                 // 物理.射線碰撞(攻擊中心點的座標，攻擊中心點的前方，射線擊中的物件，攻擊長度，圖層)
@@ -104,7 +105,7 @@ public class Enemy : MonoBehaviour
     public void Damage(float damage)
     {
         hp -= damage;
-        ani.SetTrigger("受傷觸發");
+        ani.SetTrigger("受傷開關");
 
         if (hp <= 0) Dead();
     }
@@ -117,6 +118,7 @@ public class Enemy : MonoBehaviour
         nav.isStopped = true;               // 關閉 導覽器
         enabled = false;                    // 關閉腳本
         ani.SetBool("死亡開關", true);       // 死亡動畫
+        Invoke("destroy", 3.0f);
     }
 
     /// <summary>
@@ -128,5 +130,12 @@ public class Enemy : MonoBehaviour
         nav.SetDestination(player.position);
         // 動畫控制器.設定布林值("參數名稱"，剩餘的距離 > 停止距離)
         ani.SetBool("跑步開關", nav.remainingDistance > stopDistance);
+    }
+
+    private void destroy()
+    {
+        Destroy(gameObject);
+        data.countCurrent++;
+        print(data.countCurrent);
     }
 }

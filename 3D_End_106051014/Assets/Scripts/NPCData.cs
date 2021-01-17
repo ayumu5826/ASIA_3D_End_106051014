@@ -4,7 +4,7 @@
 // 將腳本資料變成物件並保存在專案內
 
 // 建立資源選單("檔案名稱"，"選單名稱")
-[CreateAssetMenu(fileName = "NPC 資料", menuName = "KID/NPC 資料")]
+[CreateAssetMenu(fileName = "NPC 資料", menuName = "TLE/NPC 資料")]
 public class NPCData : ScriptableObject
 {
     [Header("第一段對話"), TextArea(1, 5)]
